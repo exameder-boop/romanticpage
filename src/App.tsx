@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import AmbientBackground from '@/components/AmbientBackground';
+import BackgroundMusic from '@/components/BackgroundMusic';
 import ProgressBar from '@/components/ProgressBar';
+import VolumeControl from '@/components/VolumeControl';
 import WelcomeScreen from '@/screens/WelcomeScreen';
 import QuestionsScreen from '@/screens/QuestionsScreen';
 import WordSearchScreen from '@/screens/WordSearchScreen';
@@ -13,6 +15,8 @@ import FinalScreen from '@/screens/FinalScreen';
 
 export default function App() {
   const [step, setStep] = useState(0);
+  const [musicActive, setMusicActive] = useState(false);
+  const [volume, setVolume] = useState(0.18);
 
   const [dateChoice, setDateChoice] = useState<string | null>(null);
   const [dreamChoice, setDreamChoice] = useState<string | null>(null);
@@ -23,7 +27,14 @@ export default function App() {
   const screen = () => {
     switch (step) {
       case 0:
-        return <WelcomeScreen onStart={() => go(1)} />;
+        return (
+          <WelcomeScreen
+            onStart={() => {
+              setMusicActive(true);
+              go(1);
+            }}
+          />
+        );
       case 1:
         return <QuestionsScreen onContinue={() => go(2)} />;
       case 2:
@@ -73,6 +84,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen w-full">
       <AmbientBackground />
+      <BackgroundMusic active={musicActive} volume={volume} />
       {step > 0 && <ProgressBar step={step} />}
       <main className="relative z-10">
         <AnimatePresence mode="wait">
@@ -87,6 +99,7 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
       </main>
+      <VolumeControl volume={volume} onChange={setVolume} />
     </div>
   );
 }
